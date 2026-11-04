@@ -3,10 +3,14 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "build": "node scripts/build.mjs",
-    "test": "node --test --test-isolation=none tests/*.test.mjs"
+    "test": "node --test --test-isolation=none tests/*.test.mjs",
+    "build:sites": "node scripts/build-sites.mjs",
+    "test:sites": "npm run build:sites && node --test --test-isolation=none tests/*.test.mjs sites-tests/*.test.mjs"
   }
 }

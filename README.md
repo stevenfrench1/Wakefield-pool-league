@@ -105,3 +105,14 @@ The app uses one private JSON state row with optimistic revision checks. Conflic
 ## Verification
 
 `npm test` exercises league pairing, standings, score validity, approval and role enforcement, best-of-five results, all knockout draw sizes from 2 through 64, consolation progression, and promotion/history. `npm run build` creates deployable static files. Browser smoke checks can be run with `node scripts/browser-smoke.mjs` while the dev server and a Chromium CDP endpoint on port 9222 are running. Supabase connectivity and deployed Netlify Functions require your own project configuration and must be checked after deployment.
+
+
+## Sites hosting
+
+[Wakefield Pool Championship on Sites](https://wakefield-pool-championship.stevefrench81.chatgpt.site) has been deployed with the complete Worker backend. Until Supabase and server-side secrets are connected, it shows an explicit setup page and rejects API calls with 503 instead of loading sample data. Deployment alone does not enable shared results. It starts owner-private; pupil sharing is a separate audience setting.
+
+`npm run test:sites` builds and checks the Sites Worker. `npm run build:sites` produces the Worker with embedded frontend assets in `dist/server/index.js`; the default `npm run build` remains the Netlify/static-demo build. The tracked `.openai/hosting.json` identifies the existing Sites project. Source deployed to Sites is held in its native source repository; these files mirror the migration for GitHub review.
+
+Set SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, ADMIN_PASSWORD and SESSION_SECRET as server-side Sites secrets and redeploy. Use the existing database when migrating a live club, or initialize a new project with supabase.sql when no shared data exists. Never put credentials into this repository or frontend files. Existing scrypt PIN hashes, signed sessions, role enforcement, result approvals and optimistic revisions are preserved. The Worker bounds request streams and ignores client-supplied Netlify IP headers.
+
+Sites publication succeeded; live database connectivity and pupil access remain pending configuration. The Netlify site has not been disabled or deleted.
