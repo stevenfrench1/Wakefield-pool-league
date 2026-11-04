@@ -8,6 +8,21 @@ Download this branch using GitHub's **Code → Download ZIP**, extract it, and o
 
 The checked-in demo is a snapshot. After changing the app, run `npm run build` and copy `dist/demo.html` to `demo/index.html` to refresh it.
 
+## Clubhouse interface
+
+The app uses a charcoal sidebar, Wakefield gold accents, and a responsive clubhouse dashboard. On phones, persistent bottom navigation keeps the league, cups, players, and administrator menu within reach.
+
+![Redesigned clubhouse dashboard](docs/clubhouse-desktop.png)
+
+- The dashboard prioritises available fixtures and recent results. Signed-in pupils see their own opponents and division first.
+- League standings and fixtures have separate views. Fixtures support player search, available/pending/played filters, an optional "My matches only" switch, and progressive loading.
+- Single-frame results require an explicit winner choice; no winner is preselected. Longer matches use frame counts. Signing in from a fixture returns the player to that fixture.
+- The player directory includes live search and player profiles. Administrators manage display names, ability ratings, and PINs from the player cards.
+- Tournament brackets include a round selector for navigating wide draws on phones. Pending ties show their approval state.
+- The approval queue explains approve/return behaviour and exposes both players and the submitted score. Mobile administrators reach approvals and settings through **Manage**.
+
+`scripts/ux-smoke.mjs` checks these interaction paths and all six screens at 320, 390, 768, 1024, and 1440 pixels. Like the other browser scripts, it requires the development server and Chromium's CDP endpoint on port 9222. The Mobbin integration was unavailable in the development session; no Mobbin references were accessed.
+
 ## Run locally
 
 Requires Node.js 22 or later (Node 24 also works).

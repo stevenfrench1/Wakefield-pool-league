@@ -14,10 +14,10 @@ try {
  await send('Page.navigate',{url:'http://localhost:5173'});await until(`document.querySelector('.hero')`);
  await evaluate(`localStorage.removeItem('wakefield-demo-v1');location.reload()`);await until(`document.querySelector('.hero')`);
  assert.equal(await evaluate(`document.querySelectorAll('.stat').length`),4);
- await click('[data-action="demoAdmin"]');await click('a[href="#league"]');await until(`document.querySelector('.fixtures')`);
+ await click('[data-action="demoAdmin"]');await click('a[href="#league"]');await until(`document.querySelector('[data-league-view="fixtures"]')`);await click('[data-league-view="fixtures"]');await until(`document.querySelector('.fixtures')`);
  assert.equal(await evaluate(`document.querySelectorAll('.division-tabs button').length`),4);
  await click('[data-score]');await until(`document.querySelector('#score-form')`);
- await evaluate(`document.querySelector('#score-form').requestSubmit()`);await until(`!document.querySelector('.modal')`);
+ await evaluate(`document.querySelector('#score-form [name="winner"]').checked=true;document.querySelector('#score-form').requestSubmit()`);await until(`!document.querySelector('.modal')`);
  await click('a[href="#approvals"]');await until(`document.querySelector('[data-approve]')`);
  await click('[data-approve]');await until(`!document.querySelector('[data-approve]')`);
  await click('a[href="#cup"]');await until(`document.querySelector('.bracket')`);assert.equal(await evaluate(`document.querySelectorAll('.tie').length`),63);
@@ -28,9 +28,9 @@ try {
  await click('[data-action="logout"]');await until(`document.querySelector('.hero')`);
  await click('[data-action="login"]');await until(`document.querySelector('#login-form')`);
  await evaluate(`document.querySelector('[name="pin"]').value='1234';document.querySelector('#login-form').requestSubmit()`);await until(`!document.querySelector('.modal')`);
- await click('[data-action="record"]');await until(`document.querySelector('#choose-match')`);await evaluate(`document.querySelector('#choose-match').requestSubmit()`);await until(`document.querySelector('#score-form')`);await evaluate(`document.querySelector('#score-form').requestSubmit()`);await until(`!document.querySelector('.modal')`);
+ await click('[data-action="record"]');await until(`document.querySelector('#choose-match')`);await evaluate(`document.querySelector('#choose-match').requestSubmit()`);await until(`document.querySelector('#score-form')`);await evaluate(`document.querySelector('#score-form [name="winner"]').checked=true;document.querySelector('#score-form').requestSubmit()`);await until(`!document.querySelector('.modal')`);
  await evaluate(`location.hash='overview'`);await until(`document.querySelector('.hero')`);
- const desktop=await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true});await writeFile('/tmp/wakefield-desktop.png',Buffer.from(desktop.data,'base64'));
+ await evaluate(`document.querySelector('#toast').classList.remove('show')`);const desktop=await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true});await writeFile('/tmp/wakefield-desktop.png',Buffer.from(desktop.data,'base64'));
  await send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});
  for(const page of ['overview','league','cup','players']) {await evaluate(`location.hash='${page}'`);await until(`document.querySelector('.topbar strong').textContent===${JSON.stringify({overview:'Club overview',league:'The league',cup:'Tournament room',players:'Our players'}[page])}`);assert(await evaluate(`document.documentElement.scrollWidth<=window.innerWidth`),`Mobile page overflows: ${page}`);}
  await evaluate(`location.hash='overview'`);await until(`document.querySelector('.hero')`);const mobile=await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true});await writeFile('/tmp/wakefield-mobile.png',Buffer.from(mobile.data,'base64'));

@@ -10,8 +10,8 @@ try{
  await send('Runtime.enable');await send('Network.enable');await send('Page.enable');
  await send('Network.setBlockedURLs',{urls:['*/api/*','https://*']});
  await send('Page.navigate',{url:'http://127.0.0.1:5174/demo.html'});await until(`document.querySelector('.hero')`);
- await evaluate(`document.querySelector('[data-action="demoAdmin"]').click();location.hash='league'`);await until(`document.querySelector('.fixtures')`);
- await evaluate(`document.querySelector('[data-score]').click();document.querySelector('#score-form').requestSubmit()`);await until(`!document.querySelector('.modal')`);
+ await evaluate(`document.querySelector('[data-action="demoAdmin"]').click();location.hash='league'`);await until(`document.querySelector('[data-league-view="fixtures"]')`);await evaluate(`document.querySelector('[data-league-view="fixtures"]').click()`);await until(`document.querySelector('.fixtures')`);
+ await evaluate(`document.querySelector('[data-score]').click();document.querySelector('#score-form [name="winner"]').checked=true;document.querySelector('#score-form').requestSubmit()`);await until(`!document.querySelector('.modal')`);
  await evaluate(`location.hash='approvals'`);await until(`document.querySelector('[data-approve]')`);await evaluate(`document.querySelector('[data-approve]').click()`);await until(`!document.querySelector('[data-approve]')`);
  await evaluate(`location.hash='cup'`);await until(`document.querySelectorAll('.tie').length===63`);
  await send('Emulation.setDeviceMetricsOverride',{width:390,height:844,mobile:true,deviceScaleFactor:1});await evaluate(`location.hash='overview'`);await until(`document.querySelector('.hero')`);
