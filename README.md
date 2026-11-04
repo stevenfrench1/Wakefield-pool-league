@@ -1,10 +1,10 @@
 # Wakefield Pool Club
 
-A responsive, Netlify-ready pool league and tournament app for Mr French, George, and the pupils. Warm white, charcoal, and Wakefield gold. No package dependencies, pupil email addresses, or pupil accounts required.
+A responsive pool league and tournament app for Mr French, George, and the pupils, hosted on Sites with its built-in D1 database. Warm white, charcoal, and Wakefield gold. Pupils use a shared link and individual PINs, without email addresses or ChatGPT accounts. No runtime package dependencies are required. The older Netlify/Supabase hosting option is retained below.
 
 ## Try the downloadable demo
 
-Download this branch using GitHub's **Code → Download ZIP**, extract it, and open **demo/index.html** in a normal web browser. This is a self-contained sample club; it does not require Node, installation, Supabase, or a server. Click **Try admin view** to explore. If your device opens HTML in a file preview that blocks JavaScript, open the file in a browser instead. Shared pupil results require the full Netlify/Supabase setup below.
+Download this branch using GitHub's **Code → Download ZIP**, extract it, and open **demo/index.html** in a normal web browser. This is a self-contained sample club; it does not require Node, installation, Supabase, or a server. Click **Try admin view** to explore. If your device opens HTML in a file preview that blocks JavaScript, open the file in a browser instead. Shared pupil results use the published Sites app and its built-in database. The standalone demo is separate and never writes to the shared club.
 
 The checked-in demo is a snapshot. After changing the app, run `npm run build` and copy `dist/demo.html` to `demo/index.html` to refresh it.
 
@@ -25,7 +25,7 @@ The app uses a charcoal sidebar, Wakefield gold accents, and a responsive clubho
 
 ## Mobbin design review
 
-The mobile-first update keeps the existing competition engine, saved data format, server-side PIN handling, result approval permissions, and Supabase access controls. No database migration is required. The default W remains a placeholder; a crest uploaded by Mr French is still shown wherever the club mark appears.
+The mobile-first design pass preserved the competition engine, saved data format, server-side PIN handling and result approval permissions. The Sites hosting implementation described below replaces the external Supabase connection with D1. The default W remains a placeholder; a crest uploaded by Mr French is still shown wherever the club mark appears.
 
 References actually retrieved and viewed through Mobbin:
 
@@ -36,7 +36,7 @@ Our own product decisions: the home shortcut opens available fixtures and enable
 
 [Before and after, mobile](docs/mobile-before-after.png) · [Desktop preview](docs/clubhouse-desktop.png) · [Mobile preview](docs/clubhouse-mobile.png)
 
-Pushing this branch updates GitHub only. Netlify deployment depends on the connected site's branch/build configuration; a successful local build is not confirmation of deployment. Live Supabase connectivity must be verified on the configured Netlify site.
+Pushing this branch updates GitHub only. Sites publication uses its native source repository and deployment tools; a successful local build does not confirm publication. The optional legacy Netlify deployment uses its own branch/build configuration.
 
 ## Run locally
 
@@ -48,11 +48,11 @@ npm test
 npm run build
 ```
 
-The local development server uses port 5173. Until live credentials are configured, the app clearly displays a **demo club**, stored only in this browser. Demo has 42 fictional/sample players, four divisions, and a cup. Click **Try admin view** to explore administration. Sample player PIN: `1234`. Demo data is never copied to the live club. Do not put real pupil data into a shared demo browser.
+The legacy Netlify development server uses port 5173. Until its live credentials are configured, the app clearly displays a **demo club**, stored only in this browser. Demo has 42 fictional/sample players, four divisions, and a cup. Click **Try admin view** to explore administration. Sample player PIN: `1234`. Demo data is never copied to the live club. Do not put real pupil data into a shared demo browser.
 
-For a preview without a server, run `npm run build` and open **dist/demo.html** in a browser. This self-contained file includes its styles and JavaScript and makes no API requests. It is always a local sample demo, even if live credentials exist. Embedded viewers that block JavaScript cannot run the app; download and open the HTML in a normal browser instead. Use the Netlify deployment for shared pupil results.
+For a preview without a server, run `npm run build` and open **dist/demo.html** in a browser. This self-contained file includes its styles and JavaScript and makes no API requests. It is always a local sample demo, even if live credentials exist. Embedded viewers that block JavaScript cannot run the app; download and open the HTML in a normal browser instead. Use the published Sites app for shared pupil results.
 
-## Connect Supabase and deploy to Netlify
+## Optional legacy Netlify/Supabase hosting
 
 1. Create a Supabase project. In its SQL editor, run the complete contents of `supabase.sql`. This creates private state and login-throttling tables. Row-level security is enabled, with no anonymous or authenticated access; only the server-side service role can access club data.
 2. Import this GitHub repository into Netlify. Build command: `npm run build`; publish directory: `dist`; functions directory: `netlify/functions`. `netlify.toml` supplies these settings.
@@ -75,7 +75,7 @@ For a preview without a server, run `npm run build` and open **dist/demo.html** 
 
 Supabase and Netlify free plans should be sufficient for this small club under normal use, subject to their current limits. Free Supabase projects may pause after inactivity; resume the project if needed. Configure backups according to your retention needs. The link is public: use minimal pupil display names and follow the school's sharing arrangements.
 
-### Local live-mode development
+### Legacy local live-mode development
 
 Copy `.env.example` to `.env`, fill in values privately, and run:
 
@@ -109,10 +109,16 @@ The app uses one private JSON state row with optimistic revision checks. Conflic
 
 ## Sites hosting
 
-[Wakefield Pool Championship on Sites](https://wakefield-pool-championship.stevefrench81.chatgpt.site) has been deployed with the complete Worker backend. Until Supabase and server-side secrets are connected, it shows an explicit setup page and rejects API calls with 503 instead of loading sample data. Deployment alone does not enable shared results. It starts owner-private; pupil sharing is a separate audience setting.
+[Wakefield Pool Championship on Sites](https://wakefield-pool-championship.stevefrench81.chatgpt.site/) runs the app and its shared D1 database. Netlify and Supabase are not required for this version. The site is configured for anyone with the shared link; pupils sign in with their individual club PIN and do not need email addresses or ChatGPT accounts.
 
-`npm run test:sites` builds and checks the Sites Worker. `npm run build:sites` produces the Worker with embedded frontend assets in `dist/server/index.js`; the default `npm run build` remains the Netlify/static-demo build. The tracked `.openai/hosting.json` identifies the existing Sites project. Source deployed to Sites is held in its native source repository; these files mirror the migration for GitHub review.
+Mr French signs in through **Mr French → Sign in with ChatGPT**, using the linked owner account. The backend binds that verified account to one administrator identity. Other ChatGPT accounts do not receive administrator access. Mr French adds display names, generates private player PINs, draws competitions, and approves or returns submitted results.
 
-Set SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, ADMIN_PASSWORD and SESSION_SECRET as server-side Sites secrets and redeploy. Use the existing database when migrating a live club, or initialize a new project with supabase.sql when no shared data exists. Never put credentials into this repository or frontend files. Existing scrypt PIN hashes, signed sessions, role enforcement, result approvals and optimistic revisions are preserved. The Worker bounds request streams and ignores client-supplied Netlify IP headers.
+The live club starts with Mr French and George, without sample results. The checked-in `demo/index.html` remains a self-contained sample club stored only in the visitor's browser. An unavailable live database produces an explicit error rather than silently loading demo data.
 
-Sites publication succeeded; live database connectivity and pupil access remain pending configuration. The Netlify site has not been disabled or deleted.
+`npm run test:sites` builds and tests the Sites Worker, including real SQLite-backed checks for owner identity, PIN privacy, sessions, shared state, optimistic revision conflicts, result approvals and login throttling. `npm run build:sites` produces the Worker with embedded frontend assets in `dist/server/index.js`. The default `npm run build` still creates the optional Netlify build and standalone demo. Run `npm run db:generate` after changing `db/schema.ts`; commit the generated SQL and Drizzle metadata. Sites applies hosted migrations during publication.
+
+The tracked `.openai/hosting.json` identifies the existing Sites project and its `DB` binding. Sites provisions the database. `ADMIN_EMAIL` and `SESSION_SECRET` are server-side Sites secrets, never frontend values or repository files. The configured owner's verified email bootstraps the durable per-Site administrator ID. Source deployed to Sites is held in its native source repository; these files mirror that implementation for GitHub review.
+
+The Worker keeps salted scrypt PIN hashes private, signs HttpOnly/SameSite player sessions, checks roles and participants server-side, bounds request bodies, and rejects stale revisions rather than overwriting another result. Club data lives in D1 across devices. Login attempts are limited to eight per network address in 15 minutes; visitors may share that limit when the school or hosting gateway shares an address.
+
+The optional legacy Netlify/Supabase instructions above remain available for a separate deployment. The old Netlify site is not disabled or deleted by a Sites publication.

@@ -12,3 +12,5 @@ await writeFile('dist/server/index.js',domain+'\n'+api+'\nconst assets='+JSON.st
 await cp('.openai/hosting.json','dist/.openai/hosting.json');
 await writeFile('dist/server/wrangler.json',JSON.stringify({name:'wakefield-pool-championship',main:'index.js',compatibility_date:'2026-11-04',compatibility_flags:['nodejs_compat']},null,2));
 console.log('Built Sites Worker and embedded frontend assets.');
+
+await cp('drizzle','dist/drizzle',{recursive:true});

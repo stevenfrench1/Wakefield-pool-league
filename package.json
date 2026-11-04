@@ -11,6 +11,11 @@
     "build": "node scripts/build.mjs",
     "test": "node --test --test-isolation=none tests/*.test.mjs",
     "build:sites": "node scripts/build-sites.mjs",
-    "test:sites": "npm run build:sites && node --test --test-isolation=none tests/*.test.mjs sites-tests/*.test.mjs"
+    "test:sites": "npm run build:sites && node --test --test-isolation=none tests/*.test.mjs sites-tests/*.test.mjs",
+    "db:generate": "drizzle-kit generate"
+  },
+  "devDependencies": {
+    "drizzle-kit": "0.31.10",
+    "drizzle-orm": "0.45.2"
   }
 }
