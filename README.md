@@ -21,7 +21,22 @@ The app uses a charcoal sidebar, Wakefield gold accents, and a responsive clubho
 - Tournament brackets include a round selector for navigating wide draws on phones. Pending ties show their approval state.
 - The approval queue explains approve/return behaviour and exposes both players and the submitted score. Mobile administrators reach approvals and settings through **Manage**.
 
-`scripts/ux-smoke.mjs` checks these interaction paths and all six screens at 320, 390, 768, 1024, and 1440 pixels. Like the other browser scripts, it requires the development server and Chromium's CDP endpoint on port 9222. The Mobbin integration was unavailable in the development session; no Mobbin references were accessed.
+`scripts/ux-smoke.mjs` checks these interaction paths and all six screens at 320, 390, 768, 1024, and 1440 pixels. Like the other browser scripts, it requires the development server and Chromium's CDP endpoint on port 9222. Mobbin references were retrieved and visually reviewed for this redesign; see the design notes below.
+
+## Mobbin design review
+
+The mobile-first update keeps the existing competition engine, saved data format, server-side PIN handling, result approval permissions, and Supabase access controls. No database migration is required. The default W remains a placeholder; a crest uploaded by Mr French is still shown wherever the club mark appears.
+
+References actually retrieved and viewed through Mobbin:
+
+- [WHOOP leaderboard (iOS)](https://mobbin.com/screens/ae62ddea-7e67-4201-9d13-aa0fc67af1aa): ranked rows and compact view filters informed clearer standings typography and larger division controls.
+- [Sweatcoin leaderboard (iOS)](https://mobbin.com/screens/7019827a-0f23-4d76-902b-a288db31d3de): separated names and numeric values informed stronger points emphasis and row alignment. This is a structural reference, not a pool competition model.
+
+Our own product decisions: the home shortcut opens available fixtures and enables “My matches only” for signed-in pupils; match actions say “Submit result”; wording distinguishes unplayed fixtures from actual player availability. Text and touch controls are larger, with charcoal and warm-white surfaces and Wakefield gold actions. Existing standings, cup rounds, approval queue, rules, PIN flows, and crest upload remain available. A web-reference search returned unrelated products, which were not used as design evidence.
+
+[Before and after, mobile](docs/mobile-before-after.png) · [Desktop preview](docs/clubhouse-desktop.png) · [Mobile preview](docs/clubhouse-mobile.png)
+
+Pushing this branch updates GitHub only. Netlify deployment depends on the connected site's branch/build configuration; a successful local build is not confirmation of deployment. Live Supabase connectivity must be verified on the configured Netlify site.
 
 ## Run locally
 

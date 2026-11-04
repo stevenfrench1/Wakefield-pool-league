@@ -14,12 +14,22 @@ try{
  await send('Runtime.enable');await send('Page.enable');await send('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,mobile:false,deviceScaleFactor:1});await send('Page.navigate',{url:'http://localhost:5173'});await until(`document.querySelector('.hero')`);
  await evaluate(`localStorage.removeItem('wakefield-demo-v1');location.reload()`);await until(`document.querySelector('.hero')`);
  await screenshot('/tmp/wakefield-redesign-overview.png');
+ await click('.hero [data-go-fixtures]');await until(`document.querySelector('.fixtures')`);await navigate('overview');await click('[data-go-standings]');await until(`document.querySelector('.league-grid')`);await navigate('overview');
+ // The home shortcut opens available fixtures, including after navigating back.
+ await click('.hero [data-go-fixtures]');await until(`document.querySelector('.fixtures')`);
+ assert(await evaluate(`document.querySelector('[data-status="available"]').getAttribute('aria-pressed')==='true'`));
+ await click('[data-league-view="standings"]');await navigate('overview');await click('.hero [data-go-fixtures]');await until(`document.querySelector('.fixtures')`);
+ assert(await evaluate(`document.querySelector('[data-score]').textContent.includes('Submit result')`));
  // Signing in from a fixture returns the player to that exact match.
  await navigate('league');await click('[data-league-view="fixtures"]');await until(`document.querySelector('[data-score]')`);
  const selected=await evaluate(`document.querySelector('[data-score]').dataset.score`);
  await click('[data-score]');await until(`document.querySelector('#login-form')`);
  await evaluate(`const saved=JSON.parse(localStorage.getItem('wakefield-demo-v1'));const match=saved.league.find(m=>m.id===${JSON.stringify(selected)});document.querySelector('#login-form [name="id"]').value=match.a;document.querySelector('[name="pin"]').value='1234';document.querySelector('#login-form').requestSubmit()`);
  await until(`document.querySelector('#score-form')`);assert.equal(await evaluate(`document.querySelector('#score-form').dataset.match`),selected);
+ // The player's opponent shortcut filters to their own available fixtures.
+ await click('[data-action="close"]');await navigate('overview');await click('.hero [data-go-fixtures]');await until(`document.querySelector('#my-matches')?.checked`);
+ assert(await evaluate(`document.querySelectorAll('#fixture-list [data-score]').length>0`));
+ await evaluate(`document.querySelector('[data-score="'+${JSON.stringify(selected)}+'"]').click()`);await until(`document.querySelector('#score-form')`);
  // Single-frame scoring cannot accidentally submit a preselected winner.
  assert.equal(await evaluate(`document.querySelector('#score-form').checkValidity()`),false);
  await evaluate(`document.querySelector('#score-form').requestSubmit()`);assert(await evaluate(`!!document.querySelector('#score-form')`));
