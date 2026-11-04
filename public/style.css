@@ -4241,3 +4241,14 @@ td strong{font-size:15px;color:var(--ink)}
 .season-card{background:#2c3029}
 .season-card .section-kicker,.season-card>strong span,.season-card>p,.season-card>div{color:#e0e4d7}
 .sidebar-season>span{color:#c6cebf}
+
+.welcome-crest{display:block;width:104px;height:124px;object-fit:contain;margin:20px 0 14px}
+.hero:has(.welcome-crest){grid-template-columns:1fr;min-height:0}
+.hero:has(.welcome-crest) .hero-art{display:none}
+.hero:has(.welcome-crest) h2{max-width:700px;margin-top:0;margin-bottom:24px;line-height:1.2}
+@media(max-width:760px){.welcome-crest{width:80px;height:96px}.hero:has(.welcome-crest) h2{font-size:28px;max-width:none}}
+.hero:has(.welcome-crest){background:#fffdf7;color:var(--ink);border-color:#e8dfc4}
+.hero:has(.welcome-crest) h2{color:var(--ink)}
+.hero:has(.welcome-crest) .hero-label{color:#62675f;background:transparent;border-color:#e8dfc4}
+.hero:has(.welcome-crest) .hero-foot,.hero:has(.welcome-crest) .hero-foot b,.hero:has(.welcome-crest) .hero-format,.hero:has(.welcome-crest) .hero-format>span{color:#62675f}
+.hero:has(.welcome-crest) .mini-avatars i{border-color:#fffdf7}
