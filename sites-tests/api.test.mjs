@@ -38,3 +38,17 @@ test('D1 compare-and-swap rejects simultaneous writers without losing a result',
  const results=await Promise.all([action(),action()]);assert.deepEqual(results.map(x=>x.statusCode).sort(),[200,409]);const row=DB.sql.prepare('SELECT revision, data FROM club_state').get();assert.equal(row.revision,1);assert.equal(JSON.parse(row.data).players.length,3);
  }finally{DB.sql.close();}
 });
+
+test('owner-configured roster import applies once, survives concurrent readers and persists after configuration removal',async()=>{
+ const DB=await database();const env={DB,ADMIN_EMAIL:'owner@example.test',SESSION_SECRET:'test-session-secret-at-least-32-characters'};const handler=createHandler(env);
+ const event={path:'/api/state',httpMethod:'GET',headers:{host:'club.example'}};
+ try{
+  const start=JSON.parse((await handler(event)).body);
+  const players=start.state.players.map(p=>({existingId:p.id,name:p.name})).concat(Array.from({length:40},(_,i)=>({name:`Test Player ${i+1}`})));
+  env.ROSTER_IMPORT_JSON=JSON.stringify({id:'synthetic-import-test',expectedRevision:start.revision,players});
+  const results=await Promise.all([handler(event),handler(event)]);
+  for(const response of results){const d=JSON.parse(response.body);assert.equal(response.statusCode,200);assert.equal(d.state.players.length,42);assert.equal(d.revision,1);assert.deepEqual(d.state.appliedRosterImports,['synthetic-import-test']);}
+  delete env.ROSTER_IMPORT_JSON;
+  const later=JSON.parse((await createHandler(env)(event)).body);assert.equal(later.state.players.length,42);assert.equal(later.revision,1);assert.equal(later.state.players[0].id,start.state.players[0].id);
+ }finally{DB.sql.close();}
+});

@@ -124,4 +124,6 @@ The tracked `.openai/hosting.json` identifies the existing Sites project and its
 
 The Worker keeps salted scrypt PIN hashes private, signs HttpOnly/SameSite player sessions, checks roles and participants server-side, bounds request bodies, and rejects stale revisions rather than overwriting another result. Club data lives in D1 across devices. Login attempts are limited to eight per network address in 15 minutes; visitors may share that limit when the school or hosting gateway shares an address.
 
+An optional private one-time roster import uses secret runtime configuration (`ROSTER_IMPORT_JSON`), never request input, source files, migrations or demo data. The import requires the expected current revision and no drawn competitions or pending results. It retains every existing player ID, rating and PIN hash, validates unique display names, and applies once through a revision check. Remove the secret configuration after verifying the import.
+
 The optional legacy Netlify/Supabase instructions above remain available for a separate deployment. The old Netlify site is not disabled or deleted by a Sites publication.
