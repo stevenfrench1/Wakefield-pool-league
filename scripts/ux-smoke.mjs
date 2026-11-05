@@ -8,7 +8,7 @@ const send=(method,params={})=>new Promise((resolve,reject)=>{const n=++id;pendi
 const evaluate=async expression=>{const r=await send('Runtime.evaluate',{expression,returnByValue:true,awaitPromise:true});if(r.exceptionDetails)throw Error(r.exceptionDetails.exception?.description||r.exceptionDetails.text);return r.result.value;};
 async function until(expression){for(let i=0;i<100;i++){if(await evaluate(expression))return;await new Promise(r=>setTimeout(r,50));}throw Error(`Timed out: ${expression}`);}
 const click=selector=>evaluate(`document.querySelector(${JSON.stringify(selector)}).click()`);
-const navigate=async page=>{await evaluate(`location.hash='${page}'`);await until(`document.title.endsWith(${JSON.stringify({overview:'Club overview',league:'The league',cup:'Tournament room',players:'Our players',approvals:'Result approvals',settings:'Club settings'}[page])})`);};
+const navigate=async page=>{await evaluate(`location.hash='${page}'`);await until(`document.title.endsWith(${JSON.stringify({overview:'Overview',league:'League',cup:'Tournaments',players:'Players',approvals:'Result approvals',settings:'Club settings'}[page])})`);};
 async function screenshot(path){await evaluate(`document.querySelector('#toast').classList.remove('show')`);const r=await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true});await writeFile(path,Buffer.from(r.data,'base64'));}
 try{
  await send('Runtime.enable');await send('Page.enable');await send('Emulation.setDeviceMetricsOverride',{width:1440,height:1000,mobile:false,deviceScaleFactor:1});await send('Page.navigate',{url:'http://localhost:5173'});await until(`document.querySelector('.hero')`);

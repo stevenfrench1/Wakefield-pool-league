@@ -10,6 +10,8 @@ The checked-in demo is a snapshot. After changing the app, run `npm run build` a
 
 ## Clubhouse interface
 
+Interface copy stays plain and functional: no promotional slogans, taglines or decorative greetings. Keep user-provided wording and the labels, instructions, status and error messages needed to use the app. The requested “Welcome to the Wakefield Pool Championship” heading remains. This preference is recorded in `AGENTS.md`.
+
 The app uses a charcoal sidebar, Wakefield gold accents, and a responsive clubhouse dashboard. On phones, persistent bottom navigation keeps the league, cups, players, and administrator menu within reach.
 
 ![Redesigned clubhouse dashboard](docs/clubhouse-desktop.png)

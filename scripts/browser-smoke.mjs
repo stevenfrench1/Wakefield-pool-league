@@ -32,7 +32,7 @@ try {
  await evaluate(`location.hash='overview'`);await until(`document.querySelector('.hero')`);
  await evaluate(`document.querySelector('#toast').classList.remove('show')`);const desktop=await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true});await writeFile('/tmp/wakefield-desktop.png',Buffer.from(desktop.data,'base64'));
  await send('Emulation.setDeviceMetricsOverride',{width:390,height:844,deviceScaleFactor:1,mobile:true});
- for(const page of ['overview','league','cup','players']) {await evaluate(`location.hash='${page}'`);await until(`document.querySelector('.topbar strong').textContent===${JSON.stringify({overview:'Club overview',league:'The league',cup:'Tournament room',players:'Our players'}[page])}`);assert(await evaluate(`document.documentElement.scrollWidth<=window.innerWidth`),`Mobile page overflows: ${page}`);}
+ for(const page of ['overview','league','cup','players']) {await evaluate(`location.hash='${page}'`);await until(`document.querySelector('.topbar strong').textContent===${JSON.stringify({overview:'Overview',league:'League',cup:'Tournaments',players:'Players'}[page])}`);assert(await evaluate(`document.documentElement.scrollWidth<=window.innerWidth`),`Mobile page overflows: ${page}`);}
  await evaluate(`location.hash='overview'`);await until(`document.querySelector('.hero')`);const mobile=await send('Page.captureScreenshot',{format:'png',captureBeyondViewport:true});await writeFile('/tmp/wakefield-mobile.png',Buffer.from(mobile.data,'base64'));
  assert.deepEqual(errors,[]);console.log('Browser smoke passed: desktop dashboard, fixtures, result submission/approval, cup, players, settings, player login/submission, four mobile layouts; no browser errors.');
  // Restore a clean demo for the next visitor.
