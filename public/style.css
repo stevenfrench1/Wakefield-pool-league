@@ -4271,3 +4271,5 @@ td strong{font-size:15px;color:var(--ink)}
 .footer-brand{display:flex;align-items:center;gap:10px}.footer-crest{width:36px;height:44px;object-fit:contain}
 .dialog-crest{display:block;width:48px;height:58px;object-fit:contain;margin-bottom:12px}
 .brand img,.mobile-brand img{background:#fff;border-radius:3px;padding:2px}
+
+.brand .fallback-mark{width:36px;height:44px;flex-shrink:0}.mobile-brand .fallback-mark{width:28px;height:34px;flex-shrink:0}.fallback-mark{display:block}
