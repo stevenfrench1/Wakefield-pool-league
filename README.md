@@ -1,6 +1,6 @@
 # Wakefield Pool Club
 
-A responsive pool league and tournament app for Mr French, George, and the pupils, hosted on Sites with its built-in D1 database. Warm white, charcoal, and Wakefield gold. Pupils use a shared link and individual PINs, without email addresses or ChatGPT accounts. No runtime package dependencies are required. The older Netlify/Supabase hosting option is retained below.
+A responsive pool league and tournament app for Mr French, George, and the pupils, hosted on Sites with its built-in D1 database. White and neutral grey, with Wakefield yellow for actions and selected states. Pupils use a shared link and individual PINs, without email addresses or ChatGPT accounts. No runtime package dependencies are required. The older Netlify/Supabase hosting option is retained below.
 
 ## Try the downloadable demo
 
@@ -12,7 +12,7 @@ The checked-in demo is a snapshot. After changing the app, run `npm run build` a
 
 Interface copy stays plain and functional: no promotional slogans, taglines or decorative greetings. Keep user-provided wording and the labels, instructions, status and error messages needed to use the app. The requested “Welcome to the Wakefield Pool Championship” heading remains. This preference is recorded in `AGENTS.md`.
 
-The app uses a charcoal sidebar, Wakefield gold accents, and a responsive clubhouse dashboard. On phones, persistent bottom navigation keeps the league, cups, players, and administrator menu within reach.
+The app uses a light grey sidebar, white main surfaces, neutral grey text and Wakefield yellow (#f6c744) for primary actions and selected states. Red is reserved for errors. On phones, persistent bottom navigation keeps the league, cups, players, and administrator menu within reach.
 
 ![Redesigned clubhouse dashboard](docs/clubhouse-desktop.png)
 
@@ -35,7 +35,7 @@ References actually retrieved and viewed through Mobbin:
 - [WHOOP leaderboard (iOS)](https://mobbin.com/screens/ae62ddea-7e67-4201-9d13-aa0fc67af1aa): ranked rows and compact view filters informed clearer standings typography and larger division controls.
 - [Sweatcoin leaderboard (iOS)](https://mobbin.com/screens/7019827a-0f23-4d76-902b-a288db31d3de): separated names and numeric values informed stronger points emphasis and row alignment. This is a structural reference, not a pool competition model.
 
-Our own product decisions: the home shortcut opens available fixtures and enables “My matches only” for signed-in pupils; match actions say “Submit result”; wording distinguishes unplayed fixtures from actual player availability. Text and touch controls are larger, with charcoal and warm-white surfaces and Wakefield gold actions. Existing standings, cup rounds, approval queue, rules, PIN flows, and crest upload remain available. A web-reference search returned unrelated products, which were not used as design evidence.
+Our own product decisions: the home shortcut opens available fixtures and enables “My matches only” for signed-in pupils; match actions say “Submit result”; wording distinguishes unplayed fixtures from actual player availability. Text and touch controls are larger, with white and neutral grey surfaces and Wakefield yellow actions. Existing standings, cup rounds, approval queue, rules, PIN flows, and crest upload remain available. A web-reference search returned unrelated products, which were not used as design evidence.
 
 [Before and after, mobile](docs/mobile-before-after.png) · [Desktop preview](docs/clubhouse-desktop.png) · [Mobile preview](docs/clubhouse-mobile.png)
 
