@@ -15,6 +15,7 @@ The app uses a charcoal sidebar, Wakefield gold accents, and a responsive clubho
 ![Redesigned clubhouse dashboard](docs/clubhouse-desktop.png)
 
 - The dashboard prioritises available fixtures and recent results. Signed-in pupils see their own opponents and division first.
+- **Your next league match** appears on the overview and league pages. Signed-in players see their own plan; the player selector also lets visitors and Mr French look up any player. The suggestion uses current-division fixtures in deterministic saved round order, skipping completed matches and scores awaiting approval. Returned scores regain their place. Every unplayed fixture remains available whenever both players are free; there are no fixed playing times and no saved league migration is needed.
 - League standings and fixtures have separate views. Fixtures support player search, available/pending/played filters, an optional "My matches only" switch, and progressive loading.
 - Single-frame results require an explicit winner choice; no winner is preselected. Longer matches use frame counts. Signing in from a fixture returns the player to that fixture.
 - The player directory includes live search and player profiles. Administrators manage display names, ability ratings, and PINs from the player cards.
@@ -25,7 +26,7 @@ The app uses a charcoal sidebar, Wakefield gold accents, and a responsive clubho
 
 ## Mobbin design review
 
-The mobile-first design pass preserved the competition engine, saved data format, server-side PIN handling and result approval permissions. The Sites hosting implementation described below replaces the external Supabase connection with D1. The default W remains a placeholder; a crest uploaded by Mr French is still shown wherever the club mark appears.
+The mobile-first design pass preserved the competition engine, saved data format, server-side PIN handling and result approval permissions. The Sites hosting implementation described below replaces the external Supabase connection with D1. The existing Settings logo is used consistently in the sidebar, mobile header, welcome area, dialogs, footer and browser icon. The crest shown in the chat screenshot has not been embedded because its original image bytes are not available in the workspace; until Mr French uploads that image in Settings, these positions show the existing W placeholder.
 
 References actually retrieved and viewed through Mobbin:
 

@@ -4254,3 +4254,20 @@ td strong{font-size:15px;color:var(--ink)}
 .hero:has(.welcome-crest) .mini-avatars i{border-color:#fffdf7}
 
 .hosting-setup{margin:0 auto;max-width:700px;padding:60px 24px;min-height:100vh}.hosting-setup h1{font-size:32px;margin:24px 0}.hosting-setup p{font-size:16px;line-height:1.8;margin:18px 0}
+
+.next-league-panel{margin:22px 0;background:#fffdf7;border-color:#e8dfc4}
+.next-player-label{display:flex;align-items:center;gap:12px;margin:0;font-size:14px;color:var(--ink)}
+.next-player-label select{width:210px;min-height:44px;margin:0;padding:9px 12px;background:white}
+.next-league-body{padding:0 23px 22px}
+.next-progress{font-size:13px;color:#62675f;margin-bottom:18px;line-height:1.7}
+.next-opponent{display:flex;justify-content:space-between;align-items:center;gap:18px}
+.next-opponent h3{font-size:26px;line-height:1.3;overflow-wrap:anywhere}
+.next-opponent p,.next-message{font-size:14px;line-height:1.7;color:#62675f;margin-top:10px}
+.remaining-matches{margin-top:16px;border-top:1px solid var(--line)}
+.remaining-matches summary{cursor:pointer;min-height:44px;padding:14px 0;font-size:14px;line-height:1.6;color:var(--ink)}
+.remaining-matches .match-row{padding-inline:0}
+@media(max-width:760px){.next-player-label{width:100%;justify-content:space-between}.next-player-label select{max-width:75%;width:230px}.next-league-body{padding:0 19px 20px}.next-opponent{align-items:flex-start;flex-direction:column}.next-opponent .button{width:100%}.next-opponent h3{font-size:24px}}
+
+.footer-brand{display:flex;align-items:center;gap:10px}.footer-crest{width:36px;height:44px;object-fit:contain}
+.dialog-crest{display:block;width:48px;height:58px;object-fit:contain;margin-bottom:12px}
+.brand img,.mobile-brand img{background:#fff;border-radius:3px;padding:2px}
