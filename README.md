@@ -1,1 +1,85 @@
-# Wakefield-pool-league
+# Wakefield Pool Championship on Sites
+
+The requested transfer to Netlify is prepared on the `migrate-netlify` branch. See [NETLIFY-MIGRATION.md](NETLIFY-MIGRATION.md) for implementation, tests, required deployment access and the ordered cutover. Until that cutover completes, Sites remains the live authoritative club; the older Netlify deployment is not the migrated version.
+
+Sites provides both Worker hosting and D1 persistence. Supabase and Netlify are not used by this deployment. The original Netlify site has not been disabled or deleted.
+
+Shared link: https://wakefield-pool-championship.stevefrench81.chatgpt.site/
+
+Visitors can view standings without accounts. Players sign in with their own display name and PIN. Mr French signs in with his linked ChatGPT account using the administrator tab; pupils do not need ChatGPT accounts or email addresses. Sites verifies identity headers; the configured owner email bootstraps a durable per-Site administrator ID in D1. Only that ID can administer the club. No administrator password is required.
+
+Runtime configuration consists of the Sites-provisioned DB binding and server-side SESSION_SECRET and ADMIN_EMAIL values. Neither secret is included in source or browser bundles. Session cookies remain signed, HttpOnly, Secure and SameSite=Strict. PINs remain salted scrypt hashes, excluded from state responses. Login attempts are limited atomically. Database updates compare revisions and reject concurrent stale writes.
+
+`npm test` builds and runs API tests against real SQLite with a D1 adapter, plus domain and Worker tests. `npm run build` emits the Worker and frontend assets. `npm run db:generate` generates schema-only Drizzle migrations; applied migrations are immutable. Sites applies hosted migrations during deployment. The initial live club contains only Mr French and George, without fixtures or sample results. Sample demo data remains separate in demo/index.html.
+
+The Sites source helper is unavailable in this executor. Source is pushed with ordinary Git using the native short-lived Sites credential, and the deployment archive contains built output, hosting metadata, and generated migrations.
+
+
+## Suggested next league match
+
+Home and League include a player selector, the suggested next opponent, and all remaining fixtures. Signed-in pupils see their own plan. Suggestions follow saved round-robin order, exclude completed/pending results and use the player's actual division. Playing later matches first remains allowed. No dates or booking times are introduced, and existing league data needs no migration. Returned results regain their original priority.
+
+The exact owner-supplied Wakefield school crest is bundled permanently at `public/wakefield-logo.png` and used unchanged in all branding locations, including the browser icon and standalone demo. The W placeholder is removed. The application name is Wakefield Pool Championship throughout; existing state responses and future writes use that name. No logo upload is needed in Settings.
+
+## Competition entry and draws
+
+### Joining links
+
+Open **Join competitions** from Home or the navigation, or share `https://wakefield-pool-championship.stevefrench81.chatgpt.site/#join`. Pupils choose any combination of singles league, doubles league, singles cup and doubles cup, sign in using their existing name/PIN, and press **Confirm entries**. Signing in or opening a link never submits the selection. Existing entries are shown separately and cannot be accidentally removed by changing the selection. Each successful save shows a confirmation with links to the entered competitions.
+
+**Share joining links** offers the general page and a dedicated `/#join/<competition-id>` link for each event. A dedicated link preselects its competition if entries are open; pupils can still choose additional events before confirming. Copy link, the device share sheet where supported, WhatsApp and email compose controls are available, with a prepared message. These controls never automatically send messages. Links contain no names, PINs or sign-in credentials, and opening one grants no account or administrator permissions. Existing `/#competition/<id>` viewing links remain valid. Closed or drawn competitions show their status and cannot accept new pupil entries. Unknown links show the available competitions with an explanation.
+
+Doubles entries remain individual: partners are drawn independently for each competition under the existing rules. No partner invitations or new pupil accounts are created. Default competition names are displayed as Singles league, Doubles league, Singles cup and Doubles cup on the joining page; saved names, IDs and existing draws are unchanged. Renamed events retain their custom names.
+
+Selected entries use one authenticated `enterCompetitions` action, one revision check and one automatic pre-change recovery snapshot. All selected competitions are validated before any entries are added; a closed event or stale revision rejects the whole save. The pupil identity comes from the existing session. Administrator bulk-entry tools remain separate. Unsaved choices defer automatic refresh; a rejected stale save refreshes the current statuses while retaining the selection for review. No SQL migration or live roster/PIN/draw changes are required.
+
+Automated checks cover selection through login and confirmation, dedicated/unknown/closed links, copy fallback, sharing without credential-bearing query strings, batch-entry permissions and atomic failures, cross-device D1 persistence, revisions and recovery snapshots. Browser layout and device share-sheet verification remain outstanding because this managed environment does not expose `cua_repl.js`.
+
+The home page now offers four independently entered competitions: Full league, Singles knockout, Pairs league, and Pairs knockout. Existing clubs receive these empty, open entry lists additively; no player is automatically entered and no real draw is made by deployment. Existing roster records, PINs, legacy division leagues, cups and results are preserved.
+
+Pupils open the shared link, choose their name and sign in with their PIN. They can enter any open competition and withdraw until entries close. The Share competition button copies a dedicated `/#competition/<id>` link that works before and after drawing. Share club copies `/#competitions`.
+
+Mr French can create more competitions and edit names, singles/pairs, league/knockout format, rules, odd best-of lengths from 1 to 99, final match length, league win points and optional knockout consolation cups before the draw. Close entries pauses pupil changes; Manage entries can add a registered reserve, including while entries are closed. Drawing fixes entrants, partners and match lengths. No late entrants or pupil withdrawals are accepted after drawing. Mr French can record a post-draw withdrawal using the administrator tools below. Names and rules remain editable after the draw, including for completed events. Create another competition for the next intake. The administrator can generate/reset pupil PINs from Players; deployment does not generate them.
+
+Full leagues have one table and exactly n(n−1)/2 fixtures: 42 entrants generate 861 fixtures with 41 opponents each. There are no dates or booked playing times. The suggested next opponent follows saved draw order, skips pending results and does not prevent playing another available fixture.
+
+Pairs competitions independently shuffle their own entrants into fixed teams of two. They require at least four entrants and an even entry count. An odd count blocks drawing with “One more player needed”; reopen entries or add a registered reserve. Either partner can submit a score for their own pair. All new competition scores require Mr French’s approval, regardless of the legacy approval toggle. Pending scores do not update standings or advance knockout rounds. Standings use each competition’s saved win points, then frame difference, wins and name. Knockouts generate byes automatically and optional consolation cups include only actual first-round losers, preserving pairs.
+
+Entries and scores use the existing D1 state row and revision checks, so stale simultaneous changes are rejected for retry. New competition fields are added without SQL/schema changes. Entrants, partners, format, match lengths and scoring are fixed once drawn. Administrators can still update the competition name and rules.
+
+### Design and validation
+
+The new entry cards use distinct titles, format/status labels and explicit Enter/View actions. The [Garmin Connect iOS event list](https://mobbin.com/screens/25ab95f9-a80d-4bee-a01c-0e5d1dd67898) was retrieved and visually reviewed through Mobbin as a reference for separating event titles and secondary metadata. The existing Wakefield white/grey/yellow palette is retained; the exact supplied school crest is now the only branding image.
+
+`npm test` covers full round-robin completeness, independent entry lists, entry permissions, odd-pairs reserves, fixed draws, scores submitted by either partner, approvals, knockout sizes/byes/consolation, D1 persistence and revision conflicts, and frontend route/render wiring. Frontend rendering tests use a lightweight DOM adapter, not a browser layout engine. Browser QA for this update was unavailable because the managed environment did not expose `cua_repl.js`; mobile/desktop visual verification remains outstanding. The standalone demo is rebuilt separately and contains sample players only.
+
+The supplied PNG is preserved byte-for-byte (SHA-256 `bb0e3686d6d9991c976e4beb519d724f41bf9d79daf3907c936c795bd810a1b6`). Worker packaging base64-encodes binary PNG assets and decodes them into response bytes with `image/png`; a delivery test compares those bytes with the original file. The standalone demo embeds the same PNG as a data URI. No generated or redrawn crest is used, and no optional crossed cues have been added.
+
+**Manage entries → Add all players** lets Mr French enter every registered player with one tap before the draw, including while pupil entries are closed. It keeps existing entrants, skips duplicates and saves the whole change in one revision-checked request. The modal stays open with the updated count and the button is disabled once everyone is entered. It never generates fixtures or pairs. Drawn competitions remain locked.
+
+Manage entries also shows a checkbox list for adding a selected group. Click or tap individual names; hold Shift and click to select or deselect a contiguous range. Add selected players submits one atomic, validated administrator action, preserves existing entrants and skips duplicates. The Add all players shortcut remains available. Edit is available on every competition card and detail page. After a draw, the name and rules can be edited without changing the competition ID, share link, participants, pairings, fixtures or results.
+
+
+## Operating the club
+
+- **School Wi-Fi sign-in:** successful logins do not accumulate against the network limit. Failed guesses are limited to eight per player and network per 15 minutes. A separate network-wide limit of 256 failed guesses protects against cycling through names. Resetting that player's PIN starts a fresh per-player limit. Pupils still use their existing PINs; deployment never generates or resets them.
+- **Correct an approved result:** open Fixtures & results, show played matches, and choose **Correct result**. Administrators can change the frame score or return the fixture to unplayed, with a reason and confirmation. Changing a knockout winner clears only dependent later-round results and affected consolation ties. Saved match IDs, the original draw, fixed pairs and unrelated results remain intact. Pending scores for invalidated fixtures are removed. Score-only changes that retain the winner leave later rounds alone. Corrections are available for new competitions and earlier leagues/cups.
+- **Withdraw after drawing:** use **Withdraw player** on the competition, or **Players → Manage player → Withdraw from a competition**. Only Mr French can do this. Completed results remain; remaining fixtures become opponent walkovers. In pairs, either partner's withdrawal withdraws the whole fixed pair for that event. Both sides withdrawn produces no winner. Walkover losers do not qualify for a new consolation draw. Other competitions and PINs are unaffected. Restore the preceding recovery snapshot to undo an accidental withdrawal. Before drawing, use Manage entries instead.
+- **Shared updates:** visible pages check the shared revision every 15 seconds and when returning to the page. Changes refresh standings, entries, approvals and fixtures. Open dialogs, focused inputs and unsaved Settings changes defer updates, with an Updates waiting message. A failed connection retries automatically. Hidden pages do not poll. Conflicting saves ask the user to reopen and check the updated fixture instead of retrying an outdated score.
+- **Check setup:** sign in with Mr French's linked ChatGPT account, then open **Settings → Check setup**. The check reports database access, verified administrator identity, roster/PIN counts, competitions, pending results and recovery snapshots without changing the club.
+
+### Backup and recovery procedure
+
+Every successful state change saves its preceding revision as an encrypted D1 recovery snapshot in the same transaction. A failed save cannot leave an unprotected or partially updated club. Only the latest 50 snapshots are retained; these protect recent mistakes, not long-term history. Snapshot payloads include private PIN hashes but are encrypted with AES-256-GCM using the server session secret, and only the verified owner can list, preview or restore them. Ordinary pupil/visitor state never includes PIN hashes, session generations or administrator audit records. Keep SESSION_SECRET in private hosting configuration: rotating it makes earlier server snapshots unreadable.
+
+Before the first playing session, after a draw, and after each playing session, use **Settings → Download encrypted backup**. Choose a passphrase of at least 12 characters and store it separately from the downloaded JSON file in school-approved private storage. Exported files use scrypt-derived AES-256-GCM encryption with random salts/nonces. They contain the roster, PIN hashes, entries, fixed teams, draws, approved/pending results, history and administrator audit records. They contain no plaintext PINs or hosting secrets. Portable files can be restored after SESSION_SECRET rotation or loss of the original D1 database.
+
+To recover: sign in as the verified owner, open **Settings → Restore backup**, and either preview a server snapshot or choose a downloaded JSON file and enter its passphrase. Check the current-versus-backup counts. Type **RESTORE** to confirm. Restoring uses the current revision to reject intervening updates, saves a safety snapshot before replacement, advances the shared revision, records an audit entry and invalidates existing pupil sessions. Player PINs in the backup still work after signing in again. To undo the restore, preview the most recent snapshot labelled Before restoring the club. Never restore a file from an unknown source. Keep backup files and passphrases off public devices and out of source control.
+
+The application supports state payloads up to 1 MB; exported encrypted files fit below 2 MB. Server-side automatic snapshots and portable backups have separate encryption keys and restore paths. This deployment adds only the `club_backups` table through the generated schema migration; roster, PINs, entries and draws are not migrated or replaced.
+
+### Verification and first live session
+
+The automated suite checks 42 correct sign-ins through one network, per-player throttling, singles/pairs and legacy result corrections, dependent knockout/plate repair, withdrawals and walkovers, automatic refresh deferral/races, encrypted-file tamper detection, restoration after secret rotation, stale restore rejection, bounded snapshot retention, transaction rollback and undoing a restore. A built-Worker integration test uses independent pupil and administrator clients against a shared SQLite-backed D1 adapter: sign in, submit, approve, read the updated result on the other client, correct it, and recover a snapshot. Tests use synthetic players and do not generate real PINs, enter pupils, draw real competitions or change live results.
+
+A physical two-device trial of the published app remains an operator check: verify the roster and securely distribute any missing PINs, sign in as a pupil on one device and Mr French on another, submit an agreed real result, approve it and confirm the first device updates within 15 seconds. Browser tools were unavailable in the managed environment, and direct production HTTP requests were denied by its network policy; automated integration tests do not establish live device/browser behaviour. Use Settings → Check setup for the live database and PIN counts before that trial.
