@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile,readdir} from 'node:fs/promises';
-import {scryptSync} from 'node:crypto';
+import {createHash,scryptSync} from 'node:crypto';
 import {PGlite} from '@electric-sql/pglite';
 import {database} from './sqlite-d1.mjs';
 import {createHandler} from '../lib/sites-api.mjs';
@@ -120,5 +120,28 @@ test('PostgreSQL revision checks and recovery snapshots stay atomic for two stal
   ]);
   const results=await Promise.all([save('writer-a'),save('writer-b')]);assert.deepEqual(results.map(r=>r[1].meta.changes).sort(),[0,1]);
   assert.equal((await pg.pool.query("SELECT * FROM club_backups WHERE id IN ('writer-a','writer-b')")).rows.length,1);
+ }finally{s.close();await pg.db.close();}
+});
+
+test('the owner chooses a password privately with a single-use setup link; removing setup credentials keeps sign-in working',async()=>{
+ const s=await source(),pg=await postgres(),token='synthetic-private-owner-setup-token-at-least-32-characters';
+ try{
+  s.env.MIGRATION_FROZEN='true';await importPlatform(pg.pool,await exportPlatform(s.env),transferKey,targetKey);
+  const env={...targetEnv,ADMIN_PASSWORD_HASH:undefined,OWNER_SETUP_TOKEN_HASH:createHash('sha256').update(token).digest('hex')};
+  const handle=createNetlifyHandler({pool:pg.pool,env});
+  const req=async(route,body,extra={})=>{
+   const response=await handle(new Request('https://target.example/api/'+route,{method:body?'POST':'GET',headers:{'Content-Type':'application/json',...extra},body:body?JSON.stringify(body):undefined}));
+   return {status:response.status,data:await response.json()};
+  };
+  assert.equal((await req('config')).data.ownerSetupRequired,true);assert.equal((await req('state')).status,503);
+  assert.equal((await req('owner-setup',{token:'wrong',password})).status,403);
+  assert.equal((await req('owner-setup',{token,password:'short'})).status,400);
+  assert.equal((await req('owner-setup',{token,password},{origin:'https://evil.example'})).status,403);
+  const attempts=await Promise.all([req('owner-setup',{token,password}),req('owner-setup',{token,password})]);assert.deepEqual(attempts.map(r=>r.status).sort(),[200,409]);
+  assert.equal((await req('config')).data.ownerSetupRequired,false);assert.equal((await req('login',{role:'admin',password})).status,200);
+  assert.equal((await req('owner-setup',{token,password:'replacement-password'})).status,409);
+  const stored=await pg.pool.query("SELECT value FROM club_platform WHERE key='administrator-password'");assert(!stored.rows[0].value.includes(password));
+  delete env.OWNER_SETUP_TOKEN_HASH;delete env.MIGRATION_TOKEN;delete env.MIGRATION_SOURCE_URL;
+  assert.equal((await req('login',{role:'admin',password})).status,200);assert.equal((await req('migration-import',{})).status,503);
  }finally{s.close();await pg.db.close();}
 });

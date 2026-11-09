@@ -4426,6 +4426,7 @@ button:disabled{cursor:not-allowed;opacity:.6}
 @media(max-width:600px){.recovery-actions>*{width:100%}.snapshot-list li{align-items:flex-start;flex-direction:column}footer{flex-wrap:wrap}}
 
 /* Individual competition entry and shareable joining pages. */
+.owner-setup{max-width:600px;margin:40px auto;padding:20px}.owner-setup .settings-card{padding:28px}.owner-setup h1{font-size:26px}.owner-setup p{line-height:1.7}
 .entry-welcome-actions{display:flex;flex-wrap:wrap;gap:10px;flex-shrink:0}
 .entry-welcome>.entry-welcome-actions{align-items:center}
 .joining-identity{display:flex;align-items:center;gap:20px;padding:24px}
