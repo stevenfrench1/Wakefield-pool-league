@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+<head>
+ <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+ <meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
+ <title>Administrator setup · Wakefield Pool Championship</title>
+ <link rel="icon" href="/wakefield-logo.png"><link rel="stylesheet" href="/style.css">
+</head>
+<body><main class="owner-setup"><section class="panel settings-card">
+ <img class="dialog-crest" src="/wakefield-logo.png" alt="Wakefield school crest">
+ <h1>Administrator setup</h1>
+ <p>Choose Mr French’s password for Wakefield Pool Championship on Netlify. Pupils keep their existing PINs.</p>
+ <form id="owner-setup-form">
+  <label>Administrator password<input name="password" type="password" autocomplete="new-password" minlength="12" maxlength="256" required></label>
+  <label>Confirm password<input name="confirmation" type="password" autocomplete="new-password" minlength="12" maxlength="256" required></label>
+  <p class="form-hint">Use at least 12 characters. Keep this password private.</p>
+  <p id="setup-status" class="error" role="status" aria-live="polite"></p>
+  <button class="button primary full" type="submit">Save administrator password</button>
+ </form>
+ <p id="setup-complete" hidden>Password saved. Open the championship and select Mr French on the sign-in screen.</p>
+ <a class="button secondary full spaced" href="/">Open championship</a>
+</section></main><script type="module" src="/owner-setup.js"></script></body>
+</html>
