@@ -135,7 +135,15 @@ function leagueVersusPreview(side,match,matches){
  const opponent=match?(match.a===side?match.b:match.a):'';
  return `<div class="versus-stage ${match?'has-match':''}">${leagueVersusFighter(side,'Player 1',matches)}<div class="versus-divider" aria-hidden="true"><span>VS</span><i>8</i></div>${leagueVersusFighter(opponent,'Player 2',matches)}</div><p class="sr-only" role="status">${match?e(name(side))+' versus '+e(name(opponent))+'. Best of '+match.bestOf+'.':'Choose '+(side?'an opponent':'a player and an opponent')+' to preview the match.'}</p>`;
 }
+function matchPlayerId(entries,requested=''){
+ if(user?.role==='player')return user.id;
+ if(entries.includes(requested))return requested;
+ const own=isAdmin()?administratorPlayer(state)?.id:'';
+ return entries.includes(own)?own:'';
+}
 function leagueOpponentPanel({scope,selected,entries,matches,side=selected,context=''}){
+ selected=matchPlayerId(entries,selected);
+ side=scope==='competition'?state.competitions.find(c=>c.id===selectedCompetition)?.teams.find(t=>t.members.includes(selected))?.id||'':selected;
  const mine=matches.filter(m=>[m.a,m.b].includes(side)),submitted=new Set(state.submissions.map(s=>s.match));
  const opponent=m=>m.a===side?m.b:m.a;
  const available=mine.filter(m=>m.status==='open'&&!submitted.has(m.id)).sort((a,b)=>name(opponent(a)).localeCompare(name(opponent(b))));
@@ -150,7 +158,7 @@ function leagueOpponentPanel({scope,selected,entries,matches,side=selected,conte
 function nextLeaguePanel(){
  if(!state.league.length)return '';
  if(user?.role==='player')return playerResultPanel('division:'+(state.divisions.find(d=>d.players.includes(user.id))?.id||''));
- const selected=user?.role==='player'?user.id:selectedLeaguePlayer||'',plan=leaguePlan(state,selected);
+ const selected=matchPlayerId(state.divisions.flatMap(d=>d.players),selectedLeaguePlayer),plan=leaguePlan(state,selected);
  return leagueOpponentPanel({scope:'league',selected,entries:state.divisions.flatMap(d=>d.players),matches:state.league,context:plan.division?.name||''});
 }
 function overview(){
@@ -642,12 +650,13 @@ function competitionFixtureList(c){
 function competitionNext(c){
  if(user?.role==='player')return c.entries.includes(user.id)?playerResultPanel(c.id):'';
  if(c.format==='league'){
-  const selected=user?.role==='player'?user.id:competitionPlayer||'',team=c.teams.find(t=>t.members.includes(selected));
+  const selected=matchPlayerId(c.entries,competitionPlayer),team=c.teams.find(t=>t.members.includes(selected));
   return leagueOpponentPanel({scope:'competition',selected,entries:c.entries,matches:c.fixtures,side:team?.id||'',context:c.mode==='pairs'&&team?'Your pair: '+name(team.id):''});
  }
 
- const selected=competitionPlayer||user?.id||'',team=c.teams.find(t=>t.members.includes(selected)),matches=competitionMatches(c).filter(m=>isMatchParticipant(state,m,selected)),next=matches.find(m=>m.status==='open'&&!state.submissions.some(s=>s.match===m.id));
- return `<section class="panel next-league-panel"><div class="panel-heading"><h2>Your next match</h2><label class="next-player-label">Player<select id="competition-player" aria-label="Choose player for next competition match"><option value="">Choose your name</option>${c.entries.map(id=>`<option value="${id}" ${selected===id?'selected':''}>${e(name(id))}</option>`).join('')}</select></label></div><div class="next-league-body">${!team?'<p class="next-message">Choose an entrant to see their next match.</p>':next?`<div class="next-opponent"><div><span class="section-kicker">${c.mode==='pairs'?'YOUR PAIR · '+e(name(team.id)):'NEXT OPPONENT'}</span><h3>${e(name(next.a===team.id?next.b:next.a))}</h3><p>Best of ${next.bestOf}.</p></div>${!user||isAdmin()||isMatchParticipant(state,next,user.id)?`<button class="button primary" data-score="${next.id}">Submit result ${icon('arrow',16)}</button>`:''}</div>`:'<p class="next-message">No match available. Check pending results, the next round, or your completed fixtures below.</p>'}</div></section>`;
+ const selected=matchPlayerId(c.entries,competitionPlayer),team=c.teams.find(t=>t.members.includes(selected)),matches=competitionMatches(c).filter(m=>isMatchParticipant(state,m,selected)),next=matches.find(m=>m.status==='open'&&!state.submissions.some(s=>s.match===m.id));
+ const selector=user?.role==='player'?`<strong>${e(name(team?.id||selected))}</strong>`:`<label class="next-player-label">Player<select id="competition-player" aria-label="Choose player for next competition match"><option value="">Choose a player</option>${c.entries.map(id=>`<option value="${e(id)}" ${selected===id?'selected':''}>${e(name(id))}</option>`).join('')}</select></label>`;
+ return `<section class="panel next-league-panel"><div class="panel-heading"><h2>Your next match</h2>${selector}</div><div class="next-league-body">${!team?'<p class="next-message">Choose an entrant to see their next match.</p>':next?`<div class="next-opponent"><div><span class="section-kicker">${c.mode==='pairs'?'YOUR PAIR · '+e(name(team.id)):'NEXT OPPONENT'}</span><h3>${e(name(next.a===team.id?next.b:next.a))}</h3><p>Best of ${next.bestOf}.</p></div>${!user||isAdmin()||isMatchParticipant(state,next,user.id)?`<button class="button primary" data-score="${next.id}">Submit result ${icon('arrow',16)}</button>`:''}</div>`:'<p class="next-message">No match available. Check pending results, the next round, or your completed fixtures below.</p>'}</div></section>`;
 }
 function competitionBracket(c){return `<section class="panel bracket-panel" aria-label="${e(c.name)} bracket"><div class="bracket">${c.rounds.map((round,r)=>`<div class="bracket-round"><h3>${roundName(c,r)}</h3><div class="round-matches">${round.map(m=>bracketMatch(m)).join('')}</div></div>`).join('')}</div></section>${c.rounds.at(-1)?.[0]?.winner?`<div class="winner-banner">${icon('trophy',32)}<span>Winner<strong>${sidePlayerLinks(c.rounds.at(-1)[0].winner)}</strong></span></div>`:''}`;}
 function competitionForm(id='',format='league'){

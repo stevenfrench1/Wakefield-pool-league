@@ -425,6 +425,30 @@ test('league players choose any opponent and submit that exact match in singles 
  }
 });
 
+test('signed-in players use their own singles or fixed pair in every competition despite an earlier player selection',()=>{
+ for(const id of ['full-league','pairs-league','singles-knockout','pairs-knockout']){
+  const app=ui();
+  app.run(`state=initialState(true);for(const p of state.players.slice(0,8))act(state,'enterCompetition',{id:${JSON.stringify(id)}},{role:'player',id:p.id});act(state,'drawCompetition',{id:${JSON.stringify(id)}},{role:'admin'});const c=state.competitions.find(c=>c.id===${JSON.stringify(id)});selectedCompetition=c.id;competitionPlayer=c.teams[1].members[0];user={role:'player',id:c.teams[0].members.at(-1),name:name(c.teams[0].members.at(-1))};`);
+  const before=app.run('JSON.stringify(state)'),html=app.run('competitionNext(c)');
+  assert.equal(app.run('matchPlayerId(c.entries,competitionPlayer)'),app.run('user.id'));
+  assert.doesNotMatch(html,/id="competition-player"|Choose your name|Choose a player/);
+  assert(html.includes(app.run('e(name(c.teams[0].id))')));
+  for(const m of app.run('competitionMatches(c).filter(m=>m.status==="open")'))assert.equal(html.includes(`data-score="${m.id}"`),app.run(`isMatchParticipant(state,findMatch(state,${JSON.stringify(m.id)}),user.id)`));
+  assert.equal(app.run('JSON.stringify(state)'),before);
+ }
+});
+
+test('versus cards lock pupils to their identity and administrators start with their own entered record',()=>{
+ const app=ui();app.run(`state=initialState(true);for(const p of state.players.slice(0,8))act(state,'enterCompetition',{id:'pairs-league'},{role:'player',id:p.id});act(state,'drawCompetition',{id:'pairs-league'},{role:'admin'});const c=state.competitions.find(c=>c.id==='pairs-league');selectedCompetition=c.id;user={role:'player',id:c.teams[0].members[1],name:name(c.teams[0].members[1])};`);
+ const html=app.run('leagueOpponentPanel({scope:"competition",selected:c.teams[1].members[0],side:c.teams[1].id,entries:c.entries,matches:c.fixtures})');
+ assert.doesNotMatch(html,/id="competition-player"/);assert(html.includes(app.run('e(name(c.teams[0].id))')));
+ for(const m of app.run('c.fixtures'))assert.equal(html.includes(`value="${m.id}"`),app.run(`isMatchParticipant(state,findMatch(state,${JSON.stringify(m.id)}),user.id)`));
+ app.run('user={role:"admin",name:"Mr French"};competitionPlayer="";');
+ assert.equal(app.run('matchPlayerId(c.entries)'),app.run('administratorPlayer(state).id'));
+ const admin=app.run('competitionNext(c)');assert(admin.includes(`value="${app.run('administratorPlayer(state).id')}" selected`));
+ assert.equal(app.run('matchPlayerId(c.entries,c.teams[1].members[0])'),app.run('c.teams[1].members[0]'));
+});
+
 test('administrator versus cards preview singles or fixed pairs without assigning or submitting a match',async()=>{
  for(const id of ['full-league','pairs-league']){
   const app=ui();app.location.hash='#competition/'+id;
