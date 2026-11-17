@@ -1,0 +1,36 @@
+{
+  "surface": "Signed-out home and deep-linked routes",
+  "job": "Sign in with an existing player account or request an account; Mr French can sign in as administrator.",
+  "primaryAction": "Sign in",
+  "hierarchy": [
+    "Supplied school crest and exact welcome heading",
+    "Inline name/PIN form",
+    "Request an account and administrator access"
+  ],
+  "direction": "Quiet school-club entry screen; white and neutral grey with Wakefield yellow actions, no promotional copy.",
+  "references": [
+    "Existing public/style.css tokens and form controls",
+    "public/wakefield-logo.png unchanged",
+    "Existing login, account request and joining-link handlers"
+  ],
+  "viewports": [
+    "1440x900",
+    "390x844",
+    "320x740"
+  ],
+  "constraints": [
+    "No competition content, navigation, rules or player profiles rendered before sign-in",
+    "Retain destination hash through sign-in and account request",
+    "No roster, PIN, draw, results or backend changes",
+    "Do not overwrite a filled sign-in form during background refresh",
+    "Logout and expired sessions restore welcome screen"
+  ],
+  "states": {
+    "loading": "Branded loading screen until session is resolved",
+    "empty": "Empty roster explains account request path",
+    "error": "Inline authentication error and retryable connection error",
+    "partial": "No session/state response means stay on connection error screen",
+    "success": "Authenticated destination; account request acknowledgement",
+    "permission": "Welcome screen for every signed-out route"
+  }
+}

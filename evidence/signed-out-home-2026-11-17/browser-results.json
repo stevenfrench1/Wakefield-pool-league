@@ -1,0 +1,39 @@
+{
+  "status": "pass",
+  "data": "Synthetic state and local mock API only",
+  "layouts": [
+    {
+      "width": 1440,
+      "height": 900,
+      "formVisible": true
+    },
+    {
+      "width": 390,
+      "height": 844,
+      "formVisible": true
+    },
+    {
+      "width": 320,
+      "height": 740,
+      "formVisible": true
+    }
+  ],
+  "checks": [
+    "loading and connection recovery",
+    "all routes gated",
+    "keyboard skip link and focus",
+    "wrong PIN",
+    "filled form retained during sync",
+    "forgotten PIN outside click",
+    "signup mismatch and success",
+    "logo returns to sign-in",
+    "joining link restored",
+    "session expiry clears dialog",
+    "admin sign-in",
+    "logout",
+    "existing session restoration",
+    "empty roster",
+    "320px signup and reduced motion"
+  ],
+  "consoleErrors": []
+}

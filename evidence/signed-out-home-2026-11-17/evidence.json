@@ -1,0 +1,69 @@
+{
+  "contract": "design-contract.json: supplied crest, exact welcome heading, inline sign-in, no signed-out app shell, stable deep links and form input.",
+  "targetViewports": [
+    "1440x900",
+    "390x844",
+    "320x740"
+  ],
+  "accessibility": {
+    "status": "pass",
+    "evidence": "Browser checked skip-link keyboard navigation, visible 3px focus outline, labelled name/PIN fields, error alerts, 44px or larger interactive targets, outside-click dialog dismissal and reduced-motion rendering. Muted text is #626262 on white or #f7f7f7; action text is #262626 on #f6c744. Screen-reader and physical-device testing were not performed."
+  },
+  "responsive": {
+    "status": "pass",
+    "evidence": "Inspected rendered desktop, mobile and narrow mobile captures. No horizontal overflow at 1440, 390 or 320px; heading and account actions wrap cleanly, with scrolling for longer forms."
+  },
+  "contentStates": {
+    "loading": {
+      "status": "pass",
+      "evidence": "Delayed session response shows the crest and Checking sign-in with no app navigation (loading.png)."
+    },
+    "empty": {
+      "status": "pass",
+      "evidence": "Empty synthetic roster shows account-request guidance and keeps administrator sign-in available (empty-roster.png)."
+    },
+    "error": {
+      "status": "pass",
+      "evidence": "Incorrect PIN stays on welcome; mismatched signup PINs remain editable; failed connection offers a working Try again action (login-error.png, signup-error.png, connection-error.png)."
+    },
+    "partial": {
+      "status": "pass",
+      "evidence": "Config succeeds while state fails: no app content is mounted, and retry resolves to welcome after state recovery."
+    },
+    "success": {
+      "status": "pass",
+      "evidence": "Valid player sign-in restores a targeted joining link, administrator sign-in opens app, existing sessions bypass welcome, and signup acknowledgement stays outside the app (signed-in-deep-link.png, signup-success.png)."
+    },
+    "permission": {
+      "status": "pass",
+      "evidence": "Direct links for every app route stay on welcome until signed in. Logout and an expired session remove the app and an open account dialog. This is a UI gate; backend data response permissions were not changed."
+    }
+  },
+  "renderedEvidence": [
+    {
+      "viewport": "1440x900",
+      "artifact": "welcome-1440.png",
+      "observation": "Two-column welcome and form; supplied crest, neutral surfaces and yellow selected/action controls."
+    },
+    {
+      "viewport": "390x844",
+      "artifact": "welcome-390.png",
+      "observation": "Stacked welcome and sign-in form with readable labels and no clipped controls."
+    },
+    {
+      "viewport": "320x740",
+      "artifact": "welcome-320.png",
+      "observation": "Narrow screen preserves complete heading, usable form controls and wrapping secondary actions."
+    }
+  ],
+  "validation": {
+    "automatedTests": "npm test: 139 passed",
+    "browser": "browser-results.json; synthetic data and local mock API only",
+    "builds": [
+      "npm run build:netlify",
+      "node scripts/build.mjs; demo/index.html rebuilt"
+    ],
+    "logoSha256": "bb0e3686d6d9991c976e4beb519d724f41bf9d79daf3907c936c795bd810a1b6",
+    "deployment": "Not deployed. Local working tree already contained other unpublished application changes."
+  }
+}

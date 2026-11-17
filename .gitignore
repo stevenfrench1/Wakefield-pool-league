@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+worker/assets.mjs
+.wrangler/
+.netlify/
+.migration/
+netlify-dist/
+netlify/functions/*.zip
+netlify/functions/manifest.json

@@ -1,0 +1,27 @@
+{
+  "passed": true,
+  "viewports": [
+    320,
+    390,
+    768,
+    1440
+  ],
+  "checks": [
+    "alphabetical own opponents",
+    "search and empty search",
+    "change opponent retains context",
+    "single-frame side-B scoring",
+    "no default winner",
+    "keyboard focus loop",
+    "pending receipt and duplicate exclusion",
+    "returned-result retry",
+    "fixed pairs side-B scoring",
+    "unfinished and tied scores blocked",
+    "optional highlights",
+    "home and scoped competition entry",
+    "Escape and outside click",
+    "no horizontal overflow",
+    "no browser errors"
+  ],
+  "sampleDataOnly": true
+}
